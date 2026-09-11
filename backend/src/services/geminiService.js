@@ -17,18 +17,40 @@ const schema = {
 };
 
 const SYSTEM = `
-You are the AI inside "സമയമുണ്ട്" (Samayamundu), a humorous Smart Procrastination Manager for Kerala students.
-Speak primarily in Malayalam written in English letters (Malayalam Manglish), mixed naturally with English words.
-Sound like a close Kerala student friend: casual, witty, Gen-Z, playful, dramatic and fake-confident.
-Roast procrastination, never the person's identity or protected traits. Never be hateful, abusive, humiliating or genuinely discouraging.
-The joke is that you humorously justify procrastination while still giving a realistic next action.
-Use the actual task, chapters, estimated work time, remaining time and stage. Do not invent facts.
-If the deadline is very close, become dramatically panicked but still useful.
-If the deadline passed, do not say the user failed. Humorously rationalize the procrastination, then encourage a realistic next step.
-Keep the response compact enough for a task card.
-Avoid repeating the same jokes. Generate fresh wording.
-Return ONLY JSON matching the requested schema.
+You are the witty, humorous AI companion inside "സമയമുണ്ട്" (Samayamundu) — a smart procrastination manager designed for Kerala college students.
+Personality & Language rules:
+1. Speak in natural, hilarious Malayalam Manglish (Malayalam written in English letters) seamlessly mixed with English slang (e.g. "machane", "bro", "scene", "theernnu", "poweresh", "chumma", "supply", "internal", "deadline", "canteen", "chaya", "set aakkam").
+2. Sound like a funny, supportive best friend sitting next to them in a hostel room or canteen.
+3. Procrastination comedy: First humorously justify why they feel like putting it off ("samayamundu machane!"), but then immediately deliver a realistic reality-check and an actionable next step based on their specific task details.
+4. Always incorporate the actual task details (task name, chapters, estimated time, deadline).
+5. Tone according to urgency:
+   - Plenty of time (CHILL / MAYBE_START): Relaxed and funny, allows a quick tea break or reel break, but warns against postponing till midnight.
+   - Getting serious (OKAY_SERIOUS): Witty urgency — "Kettipidichu irikkenda, ippol thudangiyaal safe aayi theerkkam".
+   - Panic / Critical (PANIC_MODE / CRITICAL): High-energy survival mode — "Scene contra machane! Phone maatti vechittu ippo thanne start cheyyu!" Give an aggressive triage tip.
+   - Deadline passed (DEADLINE_DEAD): Do not shame them; humorously rationalize it ("Kazhinjathu kazhinju, ini damage control cheyyam") and tell them what to submit/do right now.
+   - Emergency mode: Punchy, urgent 1-2 line rescue plan.
+6. Return ONLY valid JSON matching the schema.
 `;
+
+function extractJson(text) {
+  if (!text) return null;
+  let clean = text.trim();
+  if (clean.startsWith("```")) {
+    clean = clean.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "").trim();
+  }
+  try {
+    return JSON.parse(clean);
+  } catch {
+    const start = clean.indexOf("{");
+    const end = clean.lastIndexOf("}");
+    if (start !== -1 && end > start) {
+      try {
+        return JSON.parse(clean.slice(start, end + 1));
+      } catch {}
+    }
+    return null;
+  }
+}
 
 function validateMessage(value) {
   if (!value || typeof value !== "object") return null;
@@ -43,6 +65,15 @@ function validateMessage(value) {
   };
 }
 
+const CANDIDATE_MODELS = [
+  env.GEMINI_MODEL,
+  "gemini-3.5-flash-lite",
+  "gemini-3.7-flash",
+  "gemini-3.6-flash",
+  "gemini-2.5-flash-lite"
+].filter(Boolean);
+const MODELS = [...new Set(CANDIDATE_MODELS)];
+
 export async function generateAiMessage(context, mode = "normal") {
   const prompt = `
 Mode: ${mode}
@@ -55,26 +86,31 @@ Estimated work minutes: ${context.estimated_minutes ?? "Not specified"}
 Panic state: ${context.panic_state}
 Stage: ${context.stage}
 
-${mode === "emergency" ? "This is EMERGENCY MODE. Give a very short, practical rescue strategy in the same funny Manglish personality." : "Generate the normal task-card AI message."}
+${mode === "emergency" ? "This is EMERGENCY MODE. Give a lightning-fast, high-impact rescue strategy in funny, urgent Manglish." : "Generate a hilarious, authentic Kerala student task-card message with a smart first action."}
 `;
 
-  try {
-    const response = await ai.models.generateContent({
-      model: env.GEMINI_MODEL,
-      contents: prompt,
-      config: {
-        systemInstruction: SYSTEM,
-        temperature: 1.05,
-        maxOutputTokens: 500,
-        responseMimeType: "application/json",
-        responseSchema: schema
-      }
-    });
+  for (const model of MODELS) {
+    try {
+      const response = await ai.models.generateContent({
+        model,
+        contents: prompt,
+        config: {
+          systemInstruction: SYSTEM,
+          temperature: 0.85,
+          maxOutputTokens: 2500,
+          responseMimeType: "application/json",
+          responseSchema: schema
+        }
+      });
 
-    const parsed = JSON.parse(response.text);
-    return validateMessage(parsed) || getFallbackMessage(context.panic_state);
-  } catch (error) {
-    console.error("[Gemini] generation failed:", error?.message || error);
-    return getFallbackMessage(context.panic_state);
+      const parsed = extractJson(response.text);
+      const validated = validateMessage(parsed);
+      if (validated) return validated;
+    } catch (error) {
+      console.warn(`[Gemini] model "${model}" failed (${error?.status || error?.message}), checking next available model...`);
+    }
   }
+
+  console.error("[Gemini] all models failed, falling back to local message.");
+  return getFallbackMessage(context.panic_state);
 }

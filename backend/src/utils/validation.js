@@ -66,7 +66,7 @@ export function validateCreateTaskInput(body = {}) {
 export function validateUpdateTaskInput(body = {}) {
   const errors = [], data = {};
   if (!body || typeof body !== "object" || Object.keys(body).length === 0) return { valid: false, errors: ["At least one editable field is required."] };
-  const forbidden = ["id", "created_at", "started_at", "completed_at", "completed"];
+  const forbidden = ["id", "user_id", "created_at", "started_at", "completed_at", "completed"];
   const attempted = forbidden.filter((k) => body[k] !== undefined);
   if (attempted.length) errors.push(`These fields cannot be updated here: ${attempted.join(", ")}.`);
 

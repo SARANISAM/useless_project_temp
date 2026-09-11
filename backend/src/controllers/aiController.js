@@ -30,7 +30,7 @@ function contextFromTask(task, mode = "normal") {
 export async function taskAiMessage(req, res, next) {
   try {
     if (!isValidUUID(req.params.id)) throw new AppError("Invalid task id.", 400);
-    const task = await taskService.getTaskById(req.params.id);
+    const task = await taskService.getTaskById(req.params.id, req.user.id);
     const context = contextFromTask(task);
     const message = await generateAiMessage(context);
     res.json({ success: true, data: { taskId: task.id, ...message, generatedAt: new Date().toISOString() } });
@@ -39,7 +39,7 @@ export async function taskAiMessage(req, res, next) {
 
 export async function emergency(req, res, next) {
   try {
-    const tasks = await taskService.getAllTasks({ completed: false });
+    const tasks = await taskService.getAllTasks(req.user.id, { completed: false });
     if (!tasks.length) {
       return res.json({
         success: true,
@@ -64,7 +64,7 @@ export async function emergency(req, res, next) {
 
 export async function stats(req, res, next) {
   try {
-    const tasks = await taskService.getAllTasks();
+    const tasks = await taskService.getAllTasks(req.user.id);
     const total = tasks.length;
     const completed = tasks.filter((t) => t.completed).length;
     const now = Date.now();
