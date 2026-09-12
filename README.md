@@ -38,7 +38,7 @@ For Software:
 * Node.js
 * Express.js
 * Supabase Authentication
-* Google Gemini 3.8 Slash LLM
+* Google Gemini  LLM
 * LLM-based recommendation system
 * React Router
 * Git
