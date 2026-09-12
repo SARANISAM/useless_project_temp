@@ -1,289 +1,100 @@
-# സമയമുണ്ട് 😂 — Smart Procrastination Manager
+<img width="1280" height="640" alt="git (1)" src="https://github.com/user-attachments/assets/8920b256-2ba8-4988-b824-5351134eb4bd" />
 
-**Productivity alla… procrastination optimize cheyyam.**
 
-A full-stack college project that combines React, Express, Supabase PostgreSQL and Gemini to generate dynamic Malayalam-Manglish procrastination commentary based on real task deadlines.
 
-## Architecture
+# [Project Name] 🎯
 
-```text
-Browser
-  ↓
-React + Vite :5173
-  ↓ fetch only
-Express :5000
-  ├── validation
-  ├── Supabase task CRUD
-  ├── server-clock deadline/panic calculations
-  └── Gemini calls only when needed
-       ↓
-Supabase PostgreSQL ← source of truth
-       ↑
-Gemini API → structured JSON → backend validation → React
-```
 
-The Gemini API never receives database credentials and never talks directly to Supabase.
+## Basic Details
+### Team Name: [Name]
 
-## 1. Prerequisites
 
-Install:
+### Team Members
+- Team Lead: [Name] - [College]
+- Member 2: [Name] - [College]
+- Member 3: [Name] - [College]
 
-- Node.js 18+ (Node 20+ recommended)
-- npm
-- A Supabase project
-- A Gemini API key
+### Project Description
+[2-3 lines about what your project does]
 
-## 2. Supabase
+### The Problem (that doesn't exist)
+[What ridiculous problem are you solving?]
 
-The SQL is in:
+### The Solution (that nobody asked for)
+[How are you solving it? Keep it fun!]
 
-```text
-supabase/schema.sql
-```
+## Technical Details
+### Technologies/Components Used
+For Software:
+- [Languages used]
+- [Frameworks used]
+- [Libraries used]
+- [Tools used]
 
-1. Create a Supabase project.
-2. Open **SQL Editor**.
-3. Create a new query.
-4. Paste the entire contents of `supabase/schema.sql`.
-5. Run it.
-6. Confirm that `public.tasks` exists.
-7. In Supabase Project Settings → API, copy:
-   - Project URL
-   - service_role secret
+For Hardware:
+- [List main components]
+- [List specifications]
+- [List tools required]
 
-This project deliberately has no login system. RLS is enabled and no public policies are created. The Express backend uses the service-role secret to access the table. **Never expose that secret to React or commit it to Git.**
+### Implementation
+For Software:
+# Installation
+[commands]
 
-## 3. Gemini
+# Run
+[commands]
 
-Use Google AI Studio to create an API key.
+### Project Documentation
+For Software:
 
-Put it only in:
+# Screenshots (Add at least 3)
+![Screenshot1](Add screenshot 1 here with proper name)
+*Add caption explaining what this shows*
 
-```text
-backend/.env
-```
+![Screenshot2](Add screenshot 2 here with proper name)
+*Add caption explaining what this shows*
 
-The backend uses the official `@google/genai` SDK and structured JSON output. The default model is configurable with `GEMINI_MODEL`.
+![Screenshot3](Add screenshot 3 here with proper name)
+*Add caption explaining what this shows*
 
-## 4. Environment files
+# Diagrams
+![Workflow](Add your workflow/architecture diagram here)
+*Add caption explaining your workflow*
 
-Create:
+For Hardware:
 
-```text
-backend/.env
-```
+# Schematic & Circuit
+![Circuit](Add your circuit diagram here)
+*Add caption explaining connections*
 
-from `backend/.env.example`:
+![Schematic](Add your schematic diagram here)
+*Add caption explaining the schematic*
 
-```env
-PORT=5000
-APP_TIMEZONE=Asia/Kolkata
-SUPABASE_URL=your_supabase_project_url
-SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
-GEMINI_API_KEY=your_gemini_api_key
-GEMINI_MODEL=gemini-3.8-flash
-CORS_ORIGIN=http://localhost:5173
-```
+# Build Photos
+![Components](Add photo of your components here)
+*List out all components shown*
 
-Create:
+![Build](Add photos of build process here)
+*Explain the build steps*
 
-```text
-frontend/.env
-```
+![Final](Add photo of final product here)
+*Explain the final build*
 
-from `frontend/.env.example`:
+### Project Demo
+# Video
+[Add your demo video link here]
+*Explain what the video demonstrates*
 
-```env
-VITE_API_BASE_URL=http://localhost:5000/api
-```
+# Additional Demos
+[Add any extra demo materials/links]
 
-Do not put Supabase service-role or Gemini keys in the frontend.
+## Team Contributions
+- [Name 1]: [Specific contributions]
+- [Name 2]: [Specific contributions]
+- [Name 3]: [Specific contributions]
 
-## 5. Install
+---
+Made with ❤️ at TinkerHub Useless Projects 
 
-From the root:
-
-```bash
-npm install
-npm run install:all
-```
-
-## 6. Run
-
-Terminal 1:
-
-```bash
-npm run dev:backend
-```
-
-Terminal 2:
-
-```bash
-npm run dev:frontend
-```
-
-Or, after root dependencies are installed:
-
-```bash
-npm run dev
-```
-
-Open:
-
-```text
-http://localhost:5173
-```
-
-Backend health check:
-
-```text
-http://localhost:5000/api/health
-```
-
-## 7. Main API
-
-```text
-GET    /api/health
-
-POST   /api/tasks
-GET    /api/tasks
-GET    /api/tasks/:id
-PATCH  /api/tasks/:id
-DELETE /api/tasks/:id
-
-PATCH  /api/tasks/:id/start
-PATCH  /api/tasks/:id/complete
-
-POST   /api/tasks/:id/ai-message
-POST   /api/emergency
-GET    /api/stats
-```
-
-## 8. Deadline rules
-
-The backend server clock is authoritative.
-
-```text
-> 24 hours      CHILL
-6–24 hours      MAYBE START
-1–6 hours       OKAY SERIOUS
-< 1 hour        PANIC MODE
-passed          DEADLINE DEAD
-completed       COMPLETED
-```
-
-Deadlines entered by the user are interpreted in `APP_TIMEZONE`, which defaults to `Asia/Kolkata`.
-
-## 9. Honest procrastination statistic
-
-The database stores `started_at`.
-
-When the user presses **Start Task**, the backend writes the server timestamp.
-
-Therefore:
-
-```text
-procrastination time = started_at - created_at
-```
-
-The history page does not invent this number.
-
-## 10. Gemini behavior
-
-Gemini receives only the small task context it needs:
-
-- task name
-- description
-- deadline
-- remaining time
-- chapters
-- estimated work
-- panic state
-- stage
-- emergency mode when applicable
-
-Gemini returns:
-
-```json
-{
-  "panic_level": "HIGH",
-  "headline": "🚨 PANIC MODE ACTIVATED",
-  "message": "Ninakku ippo...",
-  "action": "Ippo thanne start cheyyu.",
-  "emoji": "😭🔥"
-}
-```
-
-The backend validates this response. If Gemini fails, a predefined fallback message is used so the application continues working.
-
-## 11. Troubleshooting
-
-### Backend says environment variables are missing
-
-Make sure the file is exactly:
-
-```text
-backend/.env
-```
-
-and contains real values.
-
-### Supabase errors
-
-Check:
-
-- Project URL is correct.
-- service-role secret is correct.
-- `supabase/schema.sql` was run successfully.
-- Table name is `tasks`.
-
-### Gemini errors
-
-Check:
-
-- `GEMINI_API_KEY` is correct.
-- The API key is active.
-- The configured model is available to the key.
-- The backend, not the frontend, is making the Gemini request.
-
-### CORS error
-
-Make sure:
-
-```env
-CORS_ORIGIN=http://localhost:5173
-```
-
-matches the actual frontend origin.
-
-### Port already in use
-
-Change `PORT` in `backend/.env` and update:
-
-```env
-VITE_API_BASE_URL=http://localhost:YOUR_PORT/api
-```
-
-in `frontend/.env`.
-
-## 12. Viva explanation
-
-> The React frontend collects task information and communicates only with the Express REST API. Express validates the input and stores/retrieves task data from Supabase. The backend calculates the remaining time and panic state using its own server clock. When an AI message is needed, it sends only the required task context to Gemini. Gemini returns structured Malayalam-Manglish JSON. The backend validates that response and sends it back to React. Supabase is the source of truth for task data, while the backend is the security and business-logic layer.
-
-## 13. Important security rule
-
-Never commit:
-
-```text
-backend/.env
-frontend/.env
-```
-
-Never expose:
-
-```text
-SUPABASE_SERVICE_ROLE_KEY
-GEMINI_API_KEY
-```
-
-to the browser.
+![Static Badge](https://img.shields.io/badge/TinkerHub-24?color=%23000000&link=https%3A%2F%2Fwww.tinkerhub.org%2F)
+![Static Badge](https://img.shields.io/badge/UselessProjects--26-26?link=https%3A%2F%2Ftinkerhub.org%2Fevents%2F1M8ORET9A1%2Fuseless-projects-3.0)
