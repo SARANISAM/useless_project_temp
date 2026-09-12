@@ -38,7 +38,7 @@ For Software:
 * Node.js
 * Express.js
 * Supabase Authentication
-* Google Gemini 3.8 Slash LLM
+* Google Gemini LLM
 * LLM-based recommendation system
 * React Router
 * Git
@@ -54,7 +54,7 @@ The application consists of a frontend and backend that work together to provide
 
 Users can enter a task and deadline, after which the system analyzes the available time and generates a humorous procrastination recommendation.
 
-An **LLM-powered recommendation system using Google Gemini 3.8 Slash** is integrated into the application to understand the user's task, deadline, and available time and generate contextual, personalized, and entertaining procrastination strategies.
+An **LLM-powered recommendation system using Google Gemini API** is integrated into the application to understand the user's task, deadline, and available time and generate contextual, personalized, and entertaining procrastination strategies.
 
 Supabase Authentication is used to securely handle user registration and login.
 
@@ -63,8 +63,8 @@ The frontend provides the user interface, while the backend handles the applicat
 # Installation
 
 ```bash
-git clone []
-cd [PROJECT_FOLDER_NAME]
+git clone [https://github.com/SARANISAM/useless_project_temp.git]
+
 npm install
 ```
 
