@@ -38,7 +38,7 @@ For Software:
 * Node.js
 * Express.js
 * Supabase Authentication
-* Google Gemini  LLM
+* Google Gemini 3.8 Slash LLM
 * LLM-based recommendation system
 * React Router
 * Git
@@ -63,7 +63,7 @@ The frontend provides the user interface, while the backend handles the applicat
 # Installation
 
 ```bash
-git clone [YOUR_GITHUB_REPOSITORY_URL]
+git clone []
 cd [PROJECT_FOLDER_NAME]
 npm install
 ```
@@ -80,30 +80,24 @@ For Software:
 
 # Screenshots (Add at least 3)
 
-![Screenshot1](Add screenshot 1 here with proper name)
+![https://drive.google.com/file/d/12pD06gJbLWVSasJFUBmAJucTUtRy944t/view?usp=drive_link]
 *Login and registration interface where users can create an account and securely log in.*
 
-![Screenshot2](Add screenshot 2 here with proper name)
+![https://drive.google.com/file/d/1D4tOr66k-UhzWPUT3n_R8LIVWmC3WnNC/view?usp=drive_link]
 *Task input interface where users enter their task and deadline.*
 
-![Screenshot3](Add screenshot 3 here with proper name)
+![https://drive.google.com/file/d/1oC5d0YMdpatw-QRzILhe50rFaJ1Qvsx4/view?usp=drive_link]
 *LLM-powered procrastination recommendation screen displaying a personalized strategy generated based on the user's task and deadline.*
 
-# Diagrams
-
-![Workflow](Add your workflow/architecture diagram here)
-*Workflow showing the interaction between the user, frontend, Supabase Authentication, backend, and the Gemini-powered LLM recommendation system.*
 
 ### Project Demo
 
 # Video
 
-[Add your demo video link here]
+[https://drive.google.com/file/d/1RM5tGvmTTjS6KvjLygURiM2S0EdJ8l1m/view?usp=drive_link]
 *The video demonstrates user registration/login, entering a task and deadline, processing the task using the LLM-powered recommendation system, and generating a personalized procrastination recommendation.*
 
-# Additional Demos
 
-[Add any extra demo materials/links]
 
 ## Team Contributions
 
